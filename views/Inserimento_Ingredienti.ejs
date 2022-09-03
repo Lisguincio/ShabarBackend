@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body style="display: flex; flex-direction: column; width: 50%">
+    <p style="display:block">
+    <h1>Inseriamo le ricette</h1>
+    <p>
+      <label for="NomeDrink" style="padding-left: 2%; padding-right: 2.5%"
+        >Nome del drink</label
+      >
+      <select name="NomeDrink" id="NomeDrink">
+        <%drinks.map((drink)=>{ %>
+        <option value="<%=drink.id%>"><%=drink.nome%></option>
+        <%})%>
+      </select>
+    </p>
+    <p>
+      <label for="NomeIngrediente">Nome dell'ingrediente</label>
+      <select name="NomeIngrediente" id="NomeIngrediente">
+        <%ingredients.map((ingredient)=>{ %>
+        <option value="<%=ingredient.id%>"><%=ingredient.name%></option>
+        <%})%>
+      </select>
+    </p>
+    <p>
+      <label for="Quantita" style="padding-left: 4%; padding-right: 5%"
+        >Quantità</label
+      >
+      <input name="qty" id="qty" />
+    </p>
+    <p style="font-size: large">
+      <button id="invia">Invia</button>
+    </p>
+    <p style="font-size: large">
+      <button id="Remove">Rimuovi ricetta</button>
+    </p>
+    <p style="font-size: large">
+      <button id="Reset">Resetta ricetta</button>
+    </p>
+  </p>
+
+  <p style="display: block;">
+  <h1>Sezione Ingredienti</h1>
+  <label for="NomeIngrediente">Nome dell'ingrediente</label>
+  <select name="NomeIngrediente" id="NomeIngredienteEditing">
+    <%ingredients.map((ingredient)=>{ %>
+    <option value="<%=ingredient.id%>"><%=ingredient.name%></option>
+    <%})%>
+  </select>
+  <br>
+  <p style="display: block";>
+  <div >
+      <label for="dolcezza">Dolcezza</label>
+    <input type="text" id="dolcezza" value="<%=ingredients[0].dolcezza%>" size="5%" ">
+  </div>
+  <div>
+      <label for="secco">Secco</label>
+    <input type="text" id="secco" value="<%=ingredients[0].secco%> " size="5%">
+  </div>
+  <div>
+      <label for="speziato">Speziato</label>
+    <input type="text" id="speziato" value="<%=ingredients[0].speziato%> " size="5%">
+  </div>
+
+  <button id="Edit_Ingrediente">Edit Ingrediente</button>
+   
+</p>
+
+
+
+</p>
+    <script>
+      const Send = document.getElementById("invia");
+      const Reset = document.getElementById("Reset");
+      const nomeDrink = document.getElementById("NomeDrink");
+      const nomeIngrediente = document.getElementById("NomeIngrediente");
+      const nomeIngredienteEditing = document.getElementById("NomeIngredienteEditing");
+      const quantita = document.getElementById("qty");
+
+      const Inp_dolcezza = document.getElementById("dolcezza");
+      const Inp_secco = document.getElementById("secco");
+      const Inp_speziato = document.getElementById("speziato");
+
+      const Button_Remove_Recipe = document.getElementById("Remove");
+      const Button_Edit_Ingrediente = document.getElementById("Edit_Ingrediente");
+
+      var ingredients = <%-JSON.stringify(ingredients)%>;
+
+      const sendrecipe = async () => {
+        await fetch("http://localhost:5000/backend/modificaricetta", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            drink: nomeDrink.value,
+            ingredient: nomeIngrediente.value,
+            qty: quantita.value,
+          }),
+        });
+      };
+
+      const removerecipe = async () => {
+        await fetch("http://localhost:5000/backend/removerecipe", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            drink: nomeDrink.value,
+            ingredient: nomeIngrediente.value,
+          }),
+        });
+      };
+
+      const resetrecipe = async () => {
+        await fetch("http://localhost:5000/backend/resetrecipe", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            drink: nomeDrink.value,
+          }),
+        });
+      };
+
+      const editIngredient = async() =>{
+        await fetch("http://localhost:5000/backend/modificaIngrediente", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id_ingredient: nomeIngredienteEditing.value,
+            dolcezzaparam: Inp_dolcezza.value,
+            seccoparam : Inp_secco.value,
+            speziatoparam: Inp_speziato.value
+          }),
+        });
+      };
+
+      Send.addEventListener("click", () => {
+        sendrecipe();
+      });
+
+      Reset.addEventListener("click", () => {
+        if (confirm("Sicuro di voler procedere?")) resetrecipe();
+      });
+
+      Button_Edit_Ingrediente.addEventListener("click", ()=>{
+        if (confirm("Sicuro di voler procedere?")) editIngredient();
+      })
+
+      Button_Remove_Recipe.addEventListener("click", ()=>{
+        removerecipe();
+      })
+      nomeIngredienteEditing.addEventListener("change",()=>{
+
+        Inp_dolcezza.value = ingredients[(nomeIngredienteEditing.value)-1].dolcezza;
+        Inp_secco.value = ingredients[(nomeIngredienteEditing.value)-1].secco;
+        Inp_speziato.value = ingredients[(nomeIngredienteEditing.value)-1].speziato;
+
+      })
+    </script>
+  </body>
+</html>
