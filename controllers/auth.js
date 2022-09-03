@@ -243,7 +243,7 @@ const retriveUserInfo = async (req, res) => {
 };
 
 const uploadProfileImage = async (req, res) => {
-  const email = res.locals.email(req);
+  const email = res.locals.email;
 
   const user = await getUserByEmail(email);
 
