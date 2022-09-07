@@ -1,4 +1,4 @@
-import User from "../models/user.js";
+import { getUserByEmail } from "../models/user.js";
 import UserPrefs from "../models/usersprefs.js";
 import Drink, { findMyDrink, findMyDrinkTemp } from "../models/drink.js";
 import DispersionePreferenza from "../models/dispersionepreferenze.js";
@@ -8,7 +8,7 @@ const shabar = async (req, res) => {
   //Prelevare l 'email dal token,
   const email = res.locals.email;
   //Cercare l'id utente
-  const user = await User.findOne({ where: { email: email } });
+  const user = await getUserByEmail(email);
   const id = user.id;
   //Cercare l'utente nella tabella usersprefs,
   let prefs = await UserPrefs.findOne({
@@ -95,11 +95,7 @@ export const inviaScelta = async (req, res) => {
   const email = res.locals.email;
   const { idDrink } = req.body;
 
-  const utente = await User.findOne({
-    where: {
-      email: email,
-    },
-  });
+  const utente = await getUserByEmail(email);
 
   console.log("l utente ", utente.id, "ha effettuato una nuova scelta");
   scelteUtente.create({
@@ -112,9 +108,7 @@ export const inviaScelta = async (req, res) => {
 export const listaScelte = async (req, res) => {
   const email = res.locals.email;
 
-  const utente = await User.findOne({
-    where: { email: email },
-  });
+  const utente = await getUserByEmail(email);
 
   const scelte = await scelteUtente.findAll({
     where: { extUser: utente.id },

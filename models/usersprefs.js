@@ -23,4 +23,8 @@ const UserPrefs = sequelize.define("userpref", {
   },
 });
 
+export const getUserPrefs = (email) => {
+  return UserPrefs.findOne({ where: { email } });
+};
+
 export default UserPrefs;

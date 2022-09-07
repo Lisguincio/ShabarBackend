@@ -4,8 +4,12 @@ import { Op } from "sequelize";
 import sequelize from "../utils/database.js";
 import DispersionePreferenza from "./dispersionepreferenze.js";
 import Drink from "./drink.js";
-import User from "./user.js";
+import User, { getUserByEmail } from "./user.js";
 import UserPrefs from "./usersprefs.js";
+import {
+  calcolaDispersionePreferenze,
+  calcolaMediaPonderataDrinks,
+} from "../utils/math.js";
 
 const sceltaUtente = sequelize.define(
   "sceltaUtente",
@@ -30,7 +34,7 @@ const sceltaUtente = sequelize.define(
   }
 );
 
-sceltaUtente.afterCreate(async (scelta) => {
+/* sceltaUtente.afterCreate(async (scelta) => {
   console.log("Create scelta ->");
   const { extUser, extDrink } = scelta;
 
@@ -72,7 +76,7 @@ sceltaUtente.afterCreate(async (scelta) => {
 
   //2- Select delle prime n scelte;
   //3- Modifica dei valori di UserPrefs e di DispersionePreferenzas : Punti 2 e 3 demandati al trigger AfterCreate di sceltaUtentes
-});
+}); */
 
 async function calcolaDeviazioneStandard(
   mediaPond,
@@ -169,18 +173,22 @@ async function calcolaDeviazioneStandard(
   return deviazione;
 }
 
-function calcolaMediaPonderata(oldV, numScelte, newV) {
-  const mediaPonderata = (oldV, newV) => {
-    return (oldV * (numScelte - 1) + newV * 2) / (numScelte + 1);
-  };
-
-  let newValues = {};
-
-  for (const [key, value] of Object.entries(oldV)) {
-    newValues = { ...newValues, [key]: mediaPonderata(value, newV[key]) };
-  }
-  //console.log(newValues);
-  return newValues;
-}
-
 export default sceltaUtente;
+
+export const calcolaValoriUtente = async (req, res) => {
+  const email = res.locals.email;
+  const user = await getUserByEmail(email);
+  const scelte = await sceltaUtente.findAll({ where: { extUser: user.id } });
+
+  let drinks = [];
+
+  for (let scelta of scelte) {
+    const drink = await Drink.findByPk(scelta.extDrink);
+    drinks.push(drink);
+  }
+
+  const values = calcolaMediaPonderataDrinks(drinks);
+  const dispersioni = calcolaDispersionePreferenze(drinks);
+
+  res.status(200).json({ values, dispersioni });
+};

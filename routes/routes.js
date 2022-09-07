@@ -37,6 +37,7 @@ import {
   postToggleFavorite,
 } from "../controllers/catalogue.js";
 import sequelize from "../utils/database.js";
+import { calcolaValoriUtente } from "../models/scelteUtente.js";
 
 const router = express.Router();
 
@@ -76,6 +77,7 @@ router.get("/backend/ingredients", getAllIngredients);
 
 //SHABAR ROUTES
 router.get("/shabar", authorization, shabar);
+router.get("/scelte", authorization, calcolaValoriUtente);
 router.post("/inviaScelta", authorization, inviaScelta);
 router.get("/listaScelte", authorization, listaScelte);
 
