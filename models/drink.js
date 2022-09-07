@@ -19,9 +19,6 @@ const Drink = sequelize.define("drink", {
   description: {
     type: DataTypes.TEXT("long"),
   },
-  image: {
-    type: DataTypes.STRING,
-  },
   grade_min: {
     type: DataTypes.INTEGER, //da 0 a 100;
     allowNull: false,

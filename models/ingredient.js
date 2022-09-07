@@ -14,9 +14,6 @@ const Ingredient = sequelize.define("ingredient", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  image: {
-    type: DataTypes.STRING,
-  },
   multiplier: {
     type: DataTypes.DECIMAL(10, 1), //0 INGREDIENTE NORMALE, 1 INGREDIENTI NON QUANTIFICABILI, 2 INGREDIENTI NON  -->> E' un moltiplicatore: Acqua x0; Liquori x1; Menta x0.2---
     defaultValue: "1",
