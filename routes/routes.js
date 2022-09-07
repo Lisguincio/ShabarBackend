@@ -38,6 +38,7 @@ import {
 } from "../controllers/catalogue.js";
 import sequelize from "../utils/database.js";
 import { calcolaValoriUtente } from "../models/scelteUtente.js";
+import { getDrinkImage } from "../controllers/public.js";
 
 const router = express.Router();
 
@@ -94,6 +95,9 @@ router.get("/register", (req, res) => {
   // res.sendFile(path.join(__dirname, "/register.html"));
 });
 //router.get("/admin", isAdmin);
+
+//PUBLIC ROUTES
+router.get("/download/drink/:id", getDrinkImage);
 
 router.get("/sync", (req, res) => {
   sequelize.sync().then(() => {
