@@ -4,14 +4,14 @@ import customEnv from "custom-env";
 customEnv.env("local");
 
 const sequelize = new Sequelize(
-  process.env.DBNAMEMYSQL,
-  process.env.USERNAMEMYSQL,
-  process.env.PASSWORDMYSQL,
+  process.env.MYSQLDATABASE,
+  process.env.MYSQLUSER,
+  process.env.MYSQLPASSWORD,
   {
     query: { raw: true },
     dialect: "mysql",
-    host: process.env.HOSTMYSQL,
-    port: process.env.PORTMYSQL || 3306,
+    host: process.env.MYSQLHOST,
+    port: process.env.MYSQLPORT || 3306,
     //logging: false,
   }
 );

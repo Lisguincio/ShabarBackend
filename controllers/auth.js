@@ -4,6 +4,7 @@ import * as url from "url";
 const __dirname = url.fileURLToPath(new URL("..", import.meta.url));
 
 import User, { getUserByEmail } from "../models/user.js";
+import s3 from "../utils/storage.js";
 import sendEmail from "./sendEmail.js";
 
 /* 
@@ -244,9 +245,7 @@ const retriveUserInfo = async (req, res) => {
 
 const uploadProfileImage = async (req, res) => {
   const email = res.locals.email;
-
   const user = await getUserByEmail(email);
-
   const { id } = user;
 
   if (!req.files || Object.keys(req.files).length === 0) {
@@ -254,21 +253,31 @@ const uploadProfileImage = async (req, res) => {
   }
 
   const file = req.files.file;
+
   const path = "./uploads/images/" + `profile_${id}.jpg`;
 
   console.log(file);
-  file.mv(path, function (err) {
-    if (err) console.log(err);
-  });
 
-  await User.update(
+  const params = {
+    Bucket: "profile",
+    Key: `${id}.jpg`,
+    Body: file.data,
+  };
+
+  await s3
+    .upload(params, {
+      partSize: 64 * 1024 * 1024,
+    })
+    .promise();
+
+  /* await User.update(
     {
       profileIMG: `/profileImage/profile_${id}.jpg`,
     },
     {
       where: { id: id },
     }
-  );
+  ); */
 
   return res.status(200).json({ message: "Immagine caricata" });
 };
@@ -278,9 +287,13 @@ const profileImage = async (req, res) => {
   console.log("richiesta immagine del profilo per:", email);
   const user = await getUserByEmail(email);
 
-  const path = __dirname + "/uploads/images/" + `profile_${user.id}.jpg`;
-  console.log("path: ", path);
-  return res.sendFile(path);
+  const params = {
+    Bucket: "profile",
+    Key: `${user.id}.jpg`,
+  };
+  const data = await s3.getObject(params).promise();
+  res.header("Content-Type", "image/png");
+  res.send(data.Body);
 };
 
 export {
