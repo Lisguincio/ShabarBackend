@@ -170,7 +170,7 @@ const resetPassword = async (req, res, next) => {
       dbUser.email,
       "Reset Password",
       "Cambia ora la tua password",
-      `Ciao, hai richiesto un reset della password, segui questo link => http://getdrunk.ddns.net:5000/recupera-password/${token}`
+      `Ciao, hai richiesto un reset della password, segui questo link => ${process.env.SITOWEB}/recupera-password/${token}`
     ).then(
       (ok) => {
         return res.status(200).json({ message: "Controlla casella di posta" });
