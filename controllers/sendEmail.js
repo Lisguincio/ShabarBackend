@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 import ejs from "ejs";
 
-const sendEmail = async (email, subject, emailTitle, emailBody) => {
+const sendEmail = async (email, subject, emailParams) => {
   try {
     // create reusable transporter object using the default SMTP transport
     const transporter = nodemailer.createTransport({
@@ -15,7 +15,7 @@ const sendEmail = async (email, subject, emailTitle, emailBody) => {
 
     ejs.renderFile(
       "./views/email-template.ejs",
-      { title: emailTitle, message: emailBody },
+      { ...emailParams },
       (error, data) => {
         if (error) {
           console.log(error);

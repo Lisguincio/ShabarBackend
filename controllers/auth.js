@@ -166,12 +166,12 @@ const resetPassword = async (req, res, next) => {
   } else {
     console.log("esiste l'utente");
     const token = jwt.sign({ email: dbUser.email }, process.env.SECRETKEYTOKEN);
-    sendEmail(
-      dbUser.email,
-      "Reset Password",
-      "Cambia ora la tua password",
-      `Ciao, hai richiesto un reset della password, segui questo link => ${process.env.RAILWAY_STATIC_URL}/recupera-password/${token}`
-    ).then(
+    sendEmail(dbUser.email, "Reset Password", {
+      title: "Cambia ora la tua password",
+      body: `Ciao, hai richiesto un reset della password, clicca su questo pulsante per reimpostare la password`,
+      button_main_text: "Clicca qui per cambiare la tua password",
+      button_main_link: `https://${process.env.RAILWAY_STATIC_URL}/recupera-password/${token}`,
+    }).then(
       (ok) => {
         return res.status(200).json({ message: "Controlla casella di posta" });
       },
@@ -287,11 +287,13 @@ const profileImage = async (req, res) => {
   console.log("richiesta immagine del profilo per:", email);
   const user = await getUserByEmail(email);
   try {
-    const params = {
-      Bucket: "profile",
-      Key: `${user.id}.jpg`,
-    };
-    const data = await s3.getObject(params).promise();
+    const data = await s3
+      .getObject({
+        Bucket: "profile",
+        Key: `${user.id}.jpg`,
+      })
+      .promise();
+
     res.header("Content-Type", "image/png");
     res.send(data.Body);
   } catch (error) {
