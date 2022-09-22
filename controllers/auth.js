@@ -286,14 +286,18 @@ const profileImage = async (req, res) => {
   const email = res.locals.email;
   console.log("richiesta immagine del profilo per:", email);
   const user = await getUserByEmail(email);
-
-  const params = {
-    Bucket: "profile",
-    Key: `${user.id}.jpg`,
-  };
-  const data = await s3.getObject(params).promise();
-  res.header("Content-Type", "image/png");
-  res.send(data.Body);
+  try {
+    const params = {
+      Bucket: "profile",
+      Key: `${user.id}.jpg`,
+    };
+    const data = await s3.getObject(params).promise();
+    res.header("Content-Type", "image/png");
+    res.send(data.Body);
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({ message: "Immagine non trovata" });
+  }
 };
 
 export {
