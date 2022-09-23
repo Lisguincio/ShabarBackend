@@ -9,6 +9,8 @@ import UserPrefs from "./usersprefs.js";
 import {
   calcolaDispersionePreferenze,
   calcolaMediaPonderataDrinks,
+  mediaPonderata,
+  scartoQuadraticoMedio,
 } from "../utils/math.js";
 
 const sceltaUtente = sequelize.define(
@@ -35,20 +37,20 @@ const sceltaUtente = sequelize.define(
 );
 
 /* sceltaUtente.afterCreate(async (scelta) => {
-  console.log("Create scelta ->");
+  console.log("Nuova scelta creata: Attivazione Trigger");
   const { extUser, extDrink } = scelta;
 
-  const newValues = await Drink.findByPk(extDrink, {});
+  // OTTENGO I VALORI DEL NUOVO DRINK SCELTO
+  const newValues = await Drink.findByPk(extDrink);
 
+  //OTTENGO TUTTE LE SCELTE FATTE DALL'UTENTE
   const scelteUser = await sceltaUtente.findAll({
-    //Tutte le scelte fatte dall'utente
     attributes: ["extDrink"],
     where: {
       extUser: extUser,
     },
   });
-
-  console.log(scelteUser);
+  console.log(scelteUser.flatMap((element) => element.extDrink));
 
   const userPrefsMedia = await UserPrefs.findOne({
     where: {
@@ -59,11 +61,7 @@ const sceltaUtente = sequelize.define(
 
   console.log(userPrefsMedia);
 
-  const newMedia = calcolaMediaPonderata(
-    userPrefsMedia,
-    scelteUser.length,
-    newValues
-  ); //Oggetto che detiene tutte le medie ponderate dell'utente
+  const newMedia = mediaPonderata(userPrefsMedia, scelteUser.length, newValues); //Oggetto che detiene tutte le medie ponderate dell'utente
   console.log("newMedia -----------", newMedia);
 
   await UserPrefs.update(newMedia, {
@@ -76,16 +74,16 @@ const sceltaUtente = sequelize.define(
 
   //2- Select delle prime n scelte;
   //3- Modifica dei valori di UserPrefs e di DispersionePreferenzas : Punti 2 e 3 demandati al trigger AfterCreate di sceltaUtentes
-}); */
+}); 
 
-async function calcolaDeviazioneStandard(
+ async function calcolaDeviazioneStandard(
   mediaPond,
   sceltaUtenteArray,
   extUser
 ) {
   //Scelte Utente è un array di {key:value}, che rappresenta gli id dei drink scelti dall'utente, compreso quello dell'ultima scelta
   const scelte = sceltaUtenteArray.map((scelta) => scelta["extDrink"]); //Array di indici scelti in passato, tutte values
-  //console.log(scelte); /*
+  //console.log(scelte); 
 
   //OCCORRE UNA JOIN, oppure:
   const drinksSceltiinPassato = await sequelize.query(
@@ -93,20 +91,20 @@ async function calcolaDeviazioneStandard(
     { type: QueryTypes.SELECT }
   );
 
-  /* await sceltaUtente //const drinksSceltiinPassato = await sceltaUtente.findAll({
+   await sceltaUtente //const drinksSceltiinPassato = await sceltaUtente.findAll({
     include: [
       {
         model: ["Drink"],
       },
     ],
     //attributes: { exclude: ["nome", "image", "createdAt", "updatedAt"] },
-  });*/ /*const drinksSceltiinPassato = await Drink.findAll({
+  }); const drinksSceltiinPassato = await Drink.findAll({
     attributes: { exclude: ["nome", "image", "updatedAt"] },
     where: {
       id: scelte,
     },
     raw: true,
-  }); //Array di Object risultanti dalla query dei drink*/
+  }); //Array di Object risultanti dalla query dei drink
 
   console.log("DRINK DEL PASSATO:", drinksSceltiinPassato);
 
@@ -123,18 +121,18 @@ async function calcolaDeviazioneStandard(
       valueSum = { ...valueSum, [key]: valueSum[key] + value };
       //Per ogni etichetta di quel drink, aggiungi l'oggetto alla somma di tutti i fattori
     }
-    /*     console.log(`Per il valore di ${scelte[index]} sommo i dati}`);
-    console.log(valueSum); */
+        console.log(`Per il valore di ${scelte[index]} sommo i dati}`);
+    console.log(valueSum); 
   }
   console.log(valueSum);
   //console.log(drinksSceltiinPassato);
   const n = drinksSceltiinPassato.length;
   const mean = mediaPond;
-  /*  let mean = { dolcezza: 0, secco: 0, speziato: 0 }; //Test con media aritmetica
+    let mean = { dolcezza: 0, secco: 0, speziato: 0 }; //Test con media aritmetica
   for (const [key, value] of Object.entries(valueSum)) {
     mean = { ...mean, [key]: value / n };
     //Per ogni etichetta di quel drink, aggiungi l'oggetto alla somma di tutti i fattori
-  } */
+  } 
   console.log(mean);
 
   let deviazione = { dolcezza: 0, secco: 0, speziato: 0 }; //oggetto che conterrá tutte le variazioni
@@ -147,11 +145,11 @@ async function calcolaDeviazioneStandard(
     console.log("n: ", n);
     const dev = Math.sqrt(summatoria / n);
     console.log("dev:", dev);
-    /* const valore = Math.sqrt(
+     const valore = Math.sqrt(
       drinksSceltiinPassato
         .map((x) => Math.pow(x - value, 2))
         .reduce((a, b) => a + b) / n
-    );*/
+    );
     deviazione = { ...deviazione, [key]: dev };
   }
   console.log("deviazione", deviazione);
@@ -171,9 +169,68 @@ async function calcolaDeviazioneStandard(
     }
   );
   return deviazione;
-}
+} 
+*/
 
-export default sceltaUtente;
+sceltaUtente.afterCreate(async (scelta) => {
+  const { extDrink, extUser } = scelta;
+  //CERCO TUTTE LE SCELTE FATTE DALL'UTENTE
+  const scelte = await sceltaUtente.findAll({
+    where: {
+      extUser,
+    },
+  });
+  console.log("scelte: ", scelte);
+
+  /* //PRENDO I VALORI PRECEDENTI DELLE PREFERENZE
+  const oldValues = await UserPrefs.findOne({
+    where: { extUser },
+    attributes: { exclude: ["id", "extUser", "createdAt", "updatedAt"] },
+  });
+  //console.log(oldValues); */
+
+  /* //PRENDO I VALORI PRECEDENTI DELLE DISPERSIONI
+  const oldDispersioni = await DispersionePreferenza.findOne({
+    where: { extUser },
+    attributes: { exclude: ["id", "extUser", "createdAt", "updatedAt"] },
+  });
+  //console.log(oldDispersioni); */
+
+  //PRENDO I VALORI DEI DRINK DELLE SCELTE
+  const drinks = await Drink.findAll({
+    where: {
+      id: scelte.flatMap((value) => value.extDrink),
+    },
+    attributes: { exclude: ["name", "description", "createdAt", "updatedAt"] },
+  });
+  //console.log("drinks: ", drinks);
+
+  var drinkArray = [];
+  scelte.forEach((scelta, index) => {
+    const drinkValue = drinks.find((drink) => drink.id === scelta.extDrink); // drinkValue indica a quale drink corrisponde la index-esima scelta
+    //console.log("drinkValue:", drinkValue);
+    drinkArray.push(drinkValue);
+  });
+  drinkArray = drinkArray.map(({ id, grade_min, grade_max, ...rest }) => rest);
+
+  console.log(drinkArray);
+
+  //CALCOLO LA NUOVA MEDIA PONDERATA
+  const media = calcolaMediaPonderataDrinks(drinkArray);
+  //CALCOLO LA NUOVA DISPERSIONE PER OGNI VALORE
+  const dispersione = calcolaDispersionePreferenze(drinkArray);
+  console.log("Nuova media: -->", media);
+  console.log("Nuova dispersione: -->", dispersione);
+
+  //AGGIORNO I VALORI DELLE PREFERENZE
+  await UserPrefs.update(media, {
+    where: { extUser },
+  });
+  //AGGIORNO I VALORI DELLE DISPERSIONI
+  await DispersionePreferenza.update(dispersione, {
+    where: { extUser },
+  });
+});
 
 export const calcolaValoriUtente = async (req, res) => {
   const email = res.locals.email;
@@ -192,3 +249,5 @@ export const calcolaValoriUtente = async (req, res) => {
 
   res.status(200).json({ values, dispersioni });
 };
+
+export default sceltaUtente;

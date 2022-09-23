@@ -1,4 +1,4 @@
-const mediaPonderata = (oldV = 0, numScelte, newV) => {
+export const mediaPonderata = (oldV = 0, numScelte, newV) => {
   /* console.log("Vecchio Valore: ", oldV);
   console.log("Numero Scelte: ", numScelte);
   console.log("Nuovo Valore: ", newV); */
@@ -16,8 +16,8 @@ const mediaAritmetica = (values) => {
   return media;
 };
 
-const scartoQuadraticoMedio = (values) => {
-  console.log(values);
+export const scartoQuadraticoMedio = (values) => {
+  //console.log(values);
   const media = mediaAritmetica(values);
   let sum = 0;
   for (let i = 0; i < values.length; i++) {
@@ -30,10 +30,12 @@ export function calcolaMediaPonderataDrinks(drinkArray) {
   const media = {};
 
   drinkArray.forEach((element, index) => {
-    const { dolcezza, secco, speziato } = element;
-    media.dolcezza = mediaPonderata(media.dolcezza, index + 1, dolcezza);
-    media.secco = mediaPonderata(media.secco, index + 1, secco);
-    media.speziato = mediaPonderata(media.speziato, index + 1, speziato);
+    Object.entries(element).forEach(([key, value]) => {
+      media[key] = mediaPonderata(media[key], index + 1, value);
+    });
+    //media.dolcezza = mediaPonderata(media.dolcezza, index + 1, dolcezza);
+    //media.secco = mediaPonderata(media.secco, index + 1, secco);
+    //media.speziato = mediaPonderata(media.speziato, index + 1, speziato);
   });
 
   return media;
@@ -42,15 +44,10 @@ export function calcolaMediaPonderataDrinks(drinkArray) {
 export function calcolaDispersionePreferenze(drinkArray) {
   const dispersione = {};
 
-  dispersione.dolcezza = scartoQuadraticoMedio(
-    drinkArray.map((element) => element.dolcezza)
-  );
-  dispersione.secco = scartoQuadraticoMedio(
-    drinkArray.map((element) => element.secco)
-  );
-  dispersione.speziato = scartoQuadraticoMedio(
-    drinkArray.map((element) => element.speziato)
-  );
+  Object.entries(drinkArray[0]).forEach(([key, value]) => {
+    const values = drinkArray.map((drink) => drink[key]);
+    dispersione[key] = scartoQuadraticoMedio(drinkArray.map((x) => x[key]));
+  });
 
   return dispersione;
 }
