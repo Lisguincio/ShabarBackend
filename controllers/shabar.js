@@ -24,11 +24,11 @@ const shabar = async (req, res) => {
   });
 
   let rangestemp = {
-    d_dolcezza: ranges.d_dolcezza,
+    d_dolcezza: ranges.dolcezza,
     dol_value: prefs.dolcezza,
-    d_secco: ranges.d_secco,
+    d_secco: ranges.secco,
     sec_value: prefs.secco,
-    d_speziato: ranges.d_speziato,
+    d_speziato: ranges.speziato,
     spe_value: prefs.speziato,
   };
 
