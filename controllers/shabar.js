@@ -3,6 +3,7 @@ import UserPrefs from "../models/usersprefs.js";
 import Drink, { findMyDrink, findMyDrinkTemp } from "../models/drink.js";
 import DispersionePreferenza from "../models/dispersionepreferenze.js";
 import scelteUtente from "../models/scelteUtente.js";
+import { Op } from "sequelize";
 
 const shabar = async (req, res) => {
   //Prelevare l 'email dal token,
@@ -11,52 +12,96 @@ const shabar = async (req, res) => {
   const user = await getUserByEmail(email);
   const id = user.id;
   //Cercare l'utente nella tabella usersprefs,
-  let prefs = await UserPrefs.findOne({
+  const prefs = await UserPrefs.findOne({
     where: { extUser: id },
+    attributes: { exclude: ["id", "extUser", "createdAt", "updatedAt"] },
   });
-  console.log(prefs);
+  //console.log("preferenze utente", prefs);
+
   //Trovo i valori adatti al confronto
-  let moltiplicatore = 1;
-
+  let offset = 0;
   //Trovo i ranges
-  let ranges = await DispersionePreferenza.findOne({
+  const ranges = await DispersionePreferenza.findOne({
     where: { extUser: id },
+    attributes: { exclude: ["id", "extUser", "createdAt", "updatedAt"] },
   });
 
-  let rangestemp = {
+  let shabarDrinks = [];
+  /* let rangestemp = {
     d_dolcezza: ranges.dolcezza,
     dol_value: prefs.dolcezza,
     d_secco: ranges.secco,
     sec_value: prefs.secco,
     d_speziato: ranges.speziato,
     spe_value: prefs.speziato,
-  };
+  }; */
+  let rangesTemp = { values: {}, ranges: {} };
+  Object.entries(prefs).forEach(([key, value]) => {
+    //console.log(key, value);
+    rangesTemp.values[key] = value;
+    rangesTemp.ranges[key] = ranges[key] < 0.5 ? 0.5 : ranges[key];
+  });
+  console.log("rangesTemps", rangesTemp);
 
-  const arrayRangeTemp = Object.entries(rangestemp);
-  console.log("ArrayRangeTemp: ", arrayRangeTemp);
-  const arrayRange = Manage(arrayRangeTemp);
-  let { min1, min2 } = GetMaxfromRange(arrayRange);
+  while (shabarDrinks.length < 3) {
+    //Cerco i drink che soddisfano i ranges
+    console.log("cerco con offset: ", offset);
+    const tempDrinks = await Drink.findAll({
+      where: {
+        //[dolcezza: 2.42, 2.52]
+        [Op.and]: Object.entries(rangesTemp.values).map(([key, value]) => {
+          const min = value - (rangesTemp.ranges[key] + offset);
+          const max = value + (rangesTemp.ranges[key] + offset);
+          console.log(`min ${key}`, min);
+          console.log(`max ${key}`, max);
+          return {
+            [key]: {
+              [Op.between]: [min, max],
+            },
+          };
+        }),
+      },
+    });
+    console.log("tempDrinks", tempDrinks);
+    if (tempDrinks.length > 0) {
+      tempDrinks.forEach((element) => {
+        if (!shabarDrinks.find((drink) => drink.id == element.id)) {
+          console.log(element.id, "non esiste");
+          shabarDrinks.push(element);
+        }
+      });
+    }
+    offset += 0.5;
+  }
+
+  //console.log("shabarDrinks", shabarDrinks);
+
+  //const arrayRangeTemp = Object.entries(rangestemp);
+  //console.log("ArrayRangeTemp: ", arrayRangeTemp);
+  //const arrayRange = Manage(arrayRangeTemp);
+  //let { min1, min2 } = GetMaxfromRange(arrayRange);
 
   //console.log(arrayRange);
-  console.log(min1);
-  console.log(min2);
+  //console.log(min1);
+  //console.log(min2);
 
   //Una volta ottenute le sue preferenze, cercare tra i drink quello che lo soddisfa
 
-  const { drinkstemp, iterazioni } = await findMyDrinkTemp(
+  /* const { drinkstemp, iterazioni } = await findMyDrinkTemp(
     min1,
     min2,
     moltiplicatore,
     prefs
   );
   console.log(iterazioni);
-  moltiplicatore = 1;
+  //moltiplicatore = 1;
   let drinks = await findMyDrink(ranges, moltiplicatore, prefs, iterazioni);
   console.log("drinks-out:", drinks);
 
-  if (drinks.length === 0) drinks = drinkstemp;
-  console.log("shabar: ", drinks);
-  res.status(200).json(drinks);
+  if (drinks.length === 0) drinks = drinkstemp; */
+  shabarDrinks = shabarDrinks.slice(0, 10);
+  console.log("shabar: ", shabarDrinks);
+  res.status(200).json(shabarDrinks);
 };
 
 function Manage(arrayRangeTemp) {

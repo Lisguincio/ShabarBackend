@@ -1,18 +1,21 @@
-export const mediaPonderata = (oldV = 0, numScelte, newV) => {
-  /* console.log("Vecchio Valore: ", oldV);
-  console.log("Numero Scelte: ", numScelte);
-  console.log("Nuovo Valore: ", newV); */
-  return (oldV * (numScelte - 1) + newV * 2) / (numScelte + 1);
+export const mediaPonderata = (values) => {
+  let media = 0;
+  let index = 1;
+  values.forEach((value) => {
+    media += value * index;
+    index++;
+  });
+
+  const denominatore = ((index - 1) * index) / 2;
+  return media / denominatore;
 };
 
 const mediaAritmetica = (values) => {
-  console.log("Calcolo la media aritmetica di: ", values);
   let sum = 0;
   for (let i = 0; i < values.length; i++) {
     sum += values[i];
   }
   const media = sum / values.length;
-  console.log("Media aritmetica: ", media);
   return media;
 };
 
@@ -26,27 +29,24 @@ export const scartoQuadraticoMedio = (values) => {
   return Math.sqrt(sum / values.length);
 };
 
-export function calcolaMediaPonderataDrinks(drinkArray) {
+export function calcolaMediaPonderataDrinks(drinksArray) {
   const media = {};
-
-  drinkArray.forEach((element, index) => {
-    Object.entries(element).forEach(([key, value]) => {
-      media[key] = mediaPonderata(media[key], index + 1, value);
-    });
-    //media.dolcezza = mediaPonderata(media.dolcezza, index + 1, dolcezza);
-    //media.secco = mediaPonderata(media.secco, index + 1, secco);
-    //media.speziato = mediaPonderata(media.speziato, index + 1, speziato);
+  Object.entries(drinksArray[0]).forEach(([key, value]) => {
+    //DOLCEZZA, SPEZIATO, SECCO
+    const values = drinksArray.map((drink) => drink[key]);
+    console.log(`values[${key}]`, values);
+    media[key] = mediaPonderata(values);
   });
 
   return media;
 }
 
-export function calcolaDispersionePreferenze(drinkArray) {
+export function calcolaDispersionePreferenze(drinksArray) {
   const dispersione = {};
 
-  Object.entries(drinkArray[0]).forEach(([key, value]) => {
-    const values = drinkArray.map((drink) => drink[key]);
-    dispersione[key] = scartoQuadraticoMedio(drinkArray.map((x) => x[key]));
+  Object.entries(drinksArray[0]).forEach(([key, value]) => {
+    const values = drinksArray.map((x) => x[key]);
+    dispersione[key] = scartoQuadraticoMedio(values);
   });
 
   return dispersione;
