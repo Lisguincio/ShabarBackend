@@ -5,7 +5,7 @@ import s3 from "../utils/storage.js";
 const getPublicImage = async (path, res) => {
   const params = {
     Bucket: "public",
-    Key: `/public/images/${path}`,
+    Key: `/images/${path}`,
   };
   const data = await s3.getObject(params).promise();
   res.header("Content-Type", "image/png");
