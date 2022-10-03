@@ -15,7 +15,7 @@
       >
       <select name="NomeDrink" id="NomeDrink">
         <%drinks.map((drink)=>{ %>
-        <option value="<%=drink.id%>"><%=drink.nome%></option>
+        <option value="<%=drink.id%>"><%=drink.name%></option>
         <%})%>
       </select>
     </p>
@@ -92,7 +92,7 @@
       var ingredients = <%-JSON.stringify(ingredients)%>;
 
       const sendrecipe = async () => {
-        await fetch("http://localhost:5000/backend/modificaricetta", {
+        await fetch(`${process.env.RAILWAY_STATIC_URL || 'https://localhost:5000'}/backend/modificaricetta`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -106,7 +106,7 @@
       };
 
       const removerecipe = async () => {
-        await fetch("http://localhost:5000/backend/removerecipe", {
+        await fetch(`${process.env.RAILWAY_STATIC_URL || 'https://localhost:5000'}/backend/removerecipe`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -119,7 +119,7 @@
       };
 
       const resetrecipe = async () => {
-        await fetch("http://localhost:5000/backend/resetrecipe", {
+        await fetch(`${process.env.RAILWAY_STATIC_URL || 'https://localhost:5000'}/backend/resetrecipe`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -131,7 +131,7 @@
       };
 
       const editIngredient = async() =>{
-        await fetch("http://localhost:5000/backend/modificaIngrediente", {
+        await fetch(`${process.env.RAILWAY_STATIC_URL || 'https://localhost:5000'}/backend/modificaIngrediente`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
