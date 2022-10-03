@@ -5,11 +5,17 @@ import s3 from "../utils/storage.js";
 const getPublicImage = async (path, res) => {
   const params = {
     Bucket: "public",
-    Key: `/images/${path}`,
+    Key: `/images${path}`,
   };
-  const data = await s3.getObject(params).promise();
-  res.header("Content-Type", "image/png");
-  res.send(data.Body);
+  try {
+    const data = await s3.getObject(params).promise();
+    res.header("Content-Type", "image/png");
+    res.send(data.Body);
+  } catch (err) {
+    console.log("richiesto url: ", params.Key);
+    console.log(err);
+    res.status(err.statusCode).send(err.code);
+  }
 };
 
 export const getDrinkImage = async (req, res) => {
