@@ -99,7 +99,8 @@ const login = (req, res, next) => {
             { email: dbUser.email },
             process.env.SECRETKEYTOKEN
           );
-          res.status(200).json({ token: token, message: "Autorizzato" });
+          delete dbUser.password;
+          res.status(200).json({ token: token, ...dbUser });
         }
         /* bcrypt.compare(req.body.password, dbUser.password, (err, success) => {
           if (err) {
