@@ -87,3 +87,13 @@ export const postToggleFavorite = async (req, res) => {
 
   res.status(200).json({ message });
 };
+
+export const getFavoriteDrink = async (req, res) => {
+  const { extKeyDrink } = req.params;
+  const email = res.locals.email;
+  const user = await getUserByEmail(email);
+
+  const favorite = await isFavorite(user.id, extKeyDrink);
+  console.log(favorite);
+  res.status(200).json(favorite);
+};

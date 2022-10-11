@@ -35,6 +35,7 @@ import {
   fetchDrink,
   fetchFavorites,
   postToggleFavorite,
+  getFavoriteDrink,
 } from "../controllers/catalogue.js";
 import sequelize from "../utils/database.js";
 import { calcolaValoriUtente } from "../models/scelteUtente.js";
@@ -87,7 +88,8 @@ router.get("/drinks", authorization, getAllDrinks);
 router.get("/drink/:extKeyDrink", authorization, fetchDrink);
 router.get("/drinkIngredients/:extKeyDrink", drinkIngredients);
 router.get("/favorites", authorization, fetchFavorites);
-router.post("/favorites/:extKeyDrink", authorization, postToggleFavorite);
+router.post("/favorite/:extKeyDrink", authorization, postToggleFavorite);
+router.get("/favorite/:extKeyDrink", authorization, getFavoriteDrink);
 
 //BACKEND ROUTES
 router.get("/register", (req, res) => {
