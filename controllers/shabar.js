@@ -133,19 +133,19 @@ function GetMaxfromRange(arrayRange) {
 }
 
 export const inviaScelta = async (req, res) => {
+  const { id } = req.params;
   //L'utente segnala al server la scelta fatta (da precisare quando)
   //2- Select delle prime n scelte;
   //3- Modifica dei valori di UserPrefs e di DispersionePreferenzas : Punti 2 e 3 demandati al trigger AfterCreate di scelteutentes
 
   const email = res.locals.email;
-  const { idDrink } = req.body;
 
   const utente = await getUserByEmail(email);
 
   console.log("l utente ", utente.id, "ha effettuato una nuova scelta");
   scelteUtente.create({
     extUser: utente.id,
-    extDrink: idDrink,
+    extDrink: id,
   });
   res.status(200).json({ message: "Scelta ricevuta!" });
 };

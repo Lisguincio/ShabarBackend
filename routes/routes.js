@@ -81,7 +81,7 @@ router.get("/backend/ingredients", fetchAllIngredientsBackend);
 //SHABAR ROUTES
 router.get("/shabar", authorization, shabar);
 router.get("/scelte", authorization, calcolaValoriUtente);
-router.post("/inviaScelta", authorization, inviaScelta);
+router.post("/inviaScelta/:id", authorization, inviaScelta);
 router.get("/listaScelte", authorization, listaScelte);
 
 //CATALOGUE ROUTES
