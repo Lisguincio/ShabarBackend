@@ -34,7 +34,8 @@ export const getFavoriteList = async (extKeyUser) => {
   const list = await Favorite.findAll({
     where: { extKeyUser },
   });
-  return list;
+  const result = list.map((item) => item.extKeyDrink);
+  return result;
 };
 
 export const ToggleFavorite = async (extKeyUser, extKeyDrink) => {

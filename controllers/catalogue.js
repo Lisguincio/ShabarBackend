@@ -5,59 +5,34 @@ import Drink from "../models/drink.js";
 import DispersionePreferenza from "../models/dispersionepreferenze.js";
 import scelteUtente from "../models/scelteUtente.js";
 import Recipe from "../models/recipe.js";
-import Ingredient from "../models/ingredient.js";
+import Ingredient, {
+  getIngredients,
+  getIngredient,
+} from "../models/ingredient.js";
 import Favorite, {
   getFavoriteList,
   isFavorite,
   ToggleFavorite,
 } from "../models/favorite.js";
 
-export const getAllDrinks = async (req, res, next) => {
-  const email = res.locals.email;
-
-  let drinks = [];
+export const fetchAllDrinks = async (req, res, next) => {
+  console.log("Cerco tutti i drink...");
   const drinklist = await Drink.findAll();
-
-  const user = await getUserByEmail(email);
-
-  console.log(drinklist);
-  for (const drink of drinklist) {
-    const drinkTemp = await getDrink(drink.id);
-    const favorite = await isFavorite(user.id, drink.id);
-
-    drinks.push({ ...drinkTemp, isFavorite: favorite });
-  }
-
-  res.status(200).json(drinks);
+  //console.log(drinklist);
+  res.status(200).json(drinklist.flatMap((drink) => drink.id));
 };
 
 export const fetchDrink = async (req, res) => {
   const { extKeyDrink } = req.params;
-  const email = res.locals.email;
-
-  const user = await getUserByEmail(email);
 
   const drink = await getDrink(extKeyDrink);
-  const favorite = await isFavorite(user.id, extKeyDrink);
-
-  return res.status(200).json({ ...drink, isFavorite: favorite });
+  return res.status(200).json(drink);
 };
 
-export const drinkIngredients = async (req, res, next) => {
-  let data = [];
+export const fetchDrinkIngredients = async (req, res, next) => {
   const { extKeyDrink } = req.params;
-
-  const recipes = await Recipe.findAll({
-    where: { extKeyDrink: extKeyDrink },
-  });
-
-  const ingredients = await Ingredient.findAll({
-    where: { id: recipes.map((recipe) => recipe.extKeyIngredient) },
-  });
-
-  ingredients.forEach((ingredient, index) => {
-    data.push({ ...ingredient, quantity: recipes[index].qty });
-  });
+  const data = getIngredients(extKeyDrink);
+  console.log(data);
 
   res.status("200").json(data);
 };
@@ -65,16 +40,8 @@ export const drinkIngredients = async (req, res, next) => {
 export const fetchFavorites = async (req, res) => {
   const email = res.locals.email;
   const user = await getUserByEmail(email);
-
   const favorites = await getFavoriteList(user.id);
-
-  let arrayFavorites = [];
-  for (let favorite of favorites) {
-    const drink = await getDrink(favorite.extKeyDrink);
-    arrayFavorites.push({ ...drink, isFavorite: true });
-  }
-
-  res.status(200).json(arrayFavorites);
+  res.status(200).json(favorites);
 };
 
 export const postToggleFavorite = async (req, res) => {
@@ -96,4 +63,10 @@ export const getFavoriteDrink = async (req, res) => {
   const favorite = await isFavorite(user.id, extKeyDrink);
   console.log(favorite);
   res.status(200).json(favorite);
+};
+
+export const fetchIngredient = async (req, res) => {
+  const { extKeyIngredient } = req.params;
+  const data = await getIngredient(extKeyIngredient);
+  res.status(200).json(data);
 };

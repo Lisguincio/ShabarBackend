@@ -42,17 +42,18 @@ export default Ingredient;
 
 //INGREDIENTI DEL DRINK
 export const getIngredients = async (extKeyDrink) => {
-  let data = [];
   const recipes = await Recipe.findAll({
     where: { extKeyDrink: extKeyDrink },
   });
 
-  const ingredients = await Ingredient.findAll({
-    where: { id: recipes.map((recipe) => recipe.extKeyIngredient) },
-  });
+  const ingredients = recipes.flatMap((recipe) => ({
+    id: recipe.extKeyIngredient,
+    quantity: recipe.qty,
+  }));
+  return ingredients;
+};
 
-  ingredients.forEach((ingredient, index) => {
-    data.push({ ...ingredient, quantity: recipes[index].qty });
-  });
+export const getIngredient = async (extKeyIngredient) => {
+  const data = await Ingredient.findByPk(extKeyIngredient);
   return data;
 };

@@ -2,19 +2,19 @@ import Drink from "../models/drink.js";
 import Ingredient from "../models/ingredient.js";
 import Recipe from "../models/recipe.js";
 
-const getAllDrinks = (req, res, next) => {
+export const fetchAllDrinks = (req, res, next) => {
   Drink.findAll().then((drinklist) => {
     //console.log(drinklist);
     drinklist.forEach((element) => {
       console.log(element.dataValues);
     });
 
-    res.status("200").json(JSON.parse(JSON.stringify(drinklist)));
+    res.status("200").json(drinklist);
     //res.send();
   });
 };
 
-const getAllIngredients = (req, res, next) => {
+export const getAllIngredients = (req, res, next) => {
   Ingredient.findAll().then((ingredientlist) => {
     //console.log(drinklist);
     /* ingredientlist.forEach((element) => {
@@ -158,6 +158,3 @@ export const modificaIngrediente = async (req, res) => {
 
   return res.status(200).json({ message: "Update Ingredient Done!" });
 };
-
-export { getAllDrinks };
-export { getAllIngredients };

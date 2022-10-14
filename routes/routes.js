@@ -18,8 +18,8 @@ import {
   profileImage,
 } from "../controllers/auth.js";
 import {
-  getAllDrinks as getAllDrinksBackend,
-  getAllIngredients,
+  fetchAllDrinks as fetchAllDrinksBackend,
+  getAllIngredients as fetchAllIngredientsBackend,
   inserisciRicettaHTML,
   setRecipe,
   resetRecipe,
@@ -30,10 +30,11 @@ import { authorization } from "../controllers/middleware.js";
 import Recipe from "../models/recipe.js";
 import shabar, { inviaScelta, listaScelte } from "../controllers/shabar.js";
 import {
-  drinkIngredients,
-  getAllDrinks,
+  fetchDrinkIngredients,
+  fetchAllDrinks,
   fetchDrink,
   fetchFavorites,
+  fetchIngredient,
   postToggleFavorite,
   getFavoriteDrink,
 } from "../controllers/catalogue.js";
@@ -74,8 +75,8 @@ router.post("/backend/modificaricetta", setRecipe);
 router.post("/backend/resetrecipe", resetRecipe);
 router.post("/backend/modificaIngrediente", modificaIngrediente);
 router.post("/backend/removerecipe", removerecipe);
-router.get("/backend/drinks", getAllDrinksBackend);
-router.get("/backend/ingredients", getAllIngredients);
+router.get("/backend/drinks", fetchAllDrinksBackend);
+router.get("/backend/ingredients", fetchAllIngredientsBackend);
 
 //SHABAR ROUTES
 router.get("/shabar", authorization, shabar);
@@ -84,9 +85,10 @@ router.post("/inviaScelta", authorization, inviaScelta);
 router.get("/listaScelte", authorization, listaScelte);
 
 //CATALOGUE ROUTES
-router.get("/drinks", authorization, getAllDrinks);
+router.get("/drinks", authorization, fetchAllDrinks);
 router.get("/drink/:extKeyDrink", authorization, fetchDrink);
-router.get("/drinkIngredients/:extKeyDrink", drinkIngredients);
+router.get("/drinkIngredients/:extKeyDrink", fetchDrinkIngredients);
+router.get("/ingredient/:extKeyIngredient", fetchIngredient);
 router.get("/favorites", authorization, fetchFavorites);
 router.post("/favorite/:extKeyDrink", authorization, postToggleFavorite);
 router.get("/favorite/:extKeyDrink", authorization, getFavoriteDrink);
