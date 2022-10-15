@@ -2,7 +2,10 @@ import { getUserByEmail } from "../models/user.js";
 import UserPrefs from "../models/usersprefs.js";
 import Drink, { findMyDrink, findMyDrinkTemp } from "../models/drink.js";
 import DispersionePreferenza from "../models/dispersionepreferenze.js";
-import scelteUtente from "../models/scelteUtente.js";
+import scelteUtente, {
+  createScelta,
+  getScelteUtente,
+} from "../models/scelteUtente.js";
 import { Op } from "sequelize";
 
 const shabar = async (req, res) => {
@@ -104,7 +107,7 @@ const shabar = async (req, res) => {
   res.status(200).json(shabarDrinks);
 };
 
-function Manage(arrayRangeTemp) {
+/* function Manage(arrayRangeTemp) {
   let array = [];
   for (let i = 0; i < arrayRangeTemp.length; i += 2) {
     array.push([
@@ -130,47 +133,35 @@ function GetMaxfromRange(arrayRange) {
   });
 
   return { min1, min2 };
-}
+} */
 
-export const inviaScelta = async (req, res) => {
+export const postScelta = async (req, res) => {
   const { id } = req.params;
   //L'utente segnala al server la scelta fatta (da precisare quando)
   //2- Select delle prime n scelte;
   //3- Modifica dei valori di UserPrefs e di DispersionePreferenzas : Punti 2 e 3 demandati al trigger AfterCreate di scelteutentes
-
   const email = res.locals.email;
-
-  const utente = await getUserByEmail(email);
-
-  console.log("l utente ", utente.id, "ha effettuato una nuova scelta");
-  scelteUtente.create({
-    extUser: utente.id,
-    extDrink: id,
-  });
+  const user = await getUserByEmail(email);
+  console.log("l utente ", user.id, "ha effettuato una nuova scelta:", id);
+  await createScelta(user.id, id);
   res.status(200).json({ message: "Scelta ricevuta!" });
 };
 
-export const listaScelte = async (req, res) => {
+export const fetchScelte = async (req, res) => {
   const email = res.locals.email;
-
   const utente = await getUserByEmail(email);
-
-  const scelte = await scelteUtente.findAll({
-    where: { extUser: utente.id },
-  });
+  const scelte = await getScelteUtente(utente.id);
 
   console.log(scelte);
 
-  let drinkArray = [];
+  const array = scelte.map((scelta) => ({
+    drink: scelta.extDrink,
+    dataScelta: scelta.createdAt,
+  }));
 
-  for (let scelta of scelte) {
-    const drink = await Drink.findByPk(scelta.extDrink, {});
-    drinkArray.push({ drink: drink, dataScelta: scelta.createdAt });
-  }
+  //console.log(array);
 
-  console.log(drinkArray);
-
-  res.status(200).json(drinkArray);
+  res.status(200).json(array);
 };
 
 export default shabar;

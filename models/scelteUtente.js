@@ -36,6 +36,40 @@ const sceltaUtente = sequelize.define(
   }
 );
 
+export const createScelta = async (extUser, extDrink) => {
+  await sceltaUtente.create({
+    extUser,
+    extDrink,
+  });
+  return;
+};
+
+export const getScelteUtente = async (extUser) => {
+  const scelte = await sceltaUtente.findAll({
+    where: { extUser },
+  });
+
+  return scelte;
+};
+
+export const calcolaValoriUtente = async (req, res) => {
+  const email = res.locals.email;
+  const user = await getUserByEmail(email);
+  const scelte = await sceltaUtente.findAll({ where: { extUser: user.id } });
+
+  let drinks = [];
+
+  for (let scelta of scelte) {
+    const drink = await Drink.findByPk(scelta.extDrink);
+    drinks.push(drink);
+  }
+
+  const values = calcolaMediaPonderataDrinks(drinks);
+  const dispersioni = calcolaDispersionePreferenze(drinks);
+
+  res.status(200).json({ values, dispersioni });
+};
+
 sceltaUtente.afterCreate(async (scelta) => {
   const { extDrink, extUser } = scelta;
   //CERCO TUTTE LE SCELTE FATTE DALL'UTENTE
@@ -81,23 +115,5 @@ sceltaUtente.afterCreate(async (scelta) => {
     where: { extUser },
   });
 });
-
-export const calcolaValoriUtente = async (req, res) => {
-  const email = res.locals.email;
-  const user = await getUserByEmail(email);
-  const scelte = await sceltaUtente.findAll({ where: { extUser: user.id } });
-
-  let drinks = [];
-
-  for (let scelta of scelte) {
-    const drink = await Drink.findByPk(scelta.extDrink);
-    drinks.push(drink);
-  }
-
-  const values = calcolaMediaPonderataDrinks(drinks);
-  const dispersioni = calcolaDispersionePreferenze(drinks);
-
-  res.status(200).json({ values, dispersioni });
-};
 
 export default sceltaUtente;

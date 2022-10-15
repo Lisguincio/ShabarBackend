@@ -28,7 +28,7 @@ import {
 } from "../controllers/backend.js";
 import { authorization } from "../controllers/middleware.js";
 import Recipe from "../models/recipe.js";
-import shabar, { inviaScelta, listaScelte } from "../controllers/shabar.js";
+import shabar, { postScelta, fetchScelte } from "../controllers/shabar.js";
 import {
   fetchDrinkIngredients,
   fetchAllDrinks,
@@ -81,8 +81,8 @@ router.get("/backend/ingredients", fetchAllIngredientsBackend);
 //SHABAR ROUTES
 router.get("/shabar", authorization, shabar);
 router.get("/scelte", authorization, calcolaValoriUtente);
-router.post("/inviaScelta/:id", authorization, inviaScelta);
-router.get("/listaScelte", authorization, listaScelte);
+router.post("/inviaScelta/:id", authorization, postScelta);
+router.get("/listascelte", authorization, fetchScelte);
 
 //CATALOGUE ROUTES
 router.get("/drinks", authorization, fetchAllDrinks);
