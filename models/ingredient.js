@@ -39,21 +39,3 @@ const Ingredient = sequelize.define("ingredient", {
 });
 
 export default Ingredient;
-
-//INGREDIENTI DEL DRINK
-export const getIngredients = async (extKeyDrink) => {
-  const recipes = await Recipe.findAll({
-    where: { extKeyDrink: extKeyDrink },
-  });
-
-  const ingredients = recipes.flatMap((recipe) => ({
-    id: recipe.extKeyIngredient,
-    quantity: recipe.qty,
-  }));
-  return ingredients;
-};
-
-export const getIngredient = async (extKeyIngredient) => {
-  const data = await Ingredient.findByPk(extKeyIngredient);
-  return data;
-};

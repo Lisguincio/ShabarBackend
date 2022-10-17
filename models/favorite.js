@@ -29,24 +29,3 @@ export const isFavorite = async (extKeyUser, extKeyDrink) => {
     })) !== null;
   return isFavorite;
 };
-
-export const getFavoriteList = async (extKeyUser) => {
-  const list = await Favorite.findAll({
-    where: { extKeyUser },
-  });
-  const result = list.map((item) => item.extKeyDrink);
-  return result;
-};
-
-export const ToggleFavorite = async (extKeyUser, extKeyDrink) => {
-  const favorite = await Favorite.findOne({
-    where: { extKeyUser, extKeyDrink },
-  });
-  if (favorite) {
-    await Favorite.destroy({ where: { id: favorite.id } });
-    return "Removed";
-  } else {
-    await Favorite.create({ extKeyUser, extKeyDrink });
-    return "Added";
-  }
-};

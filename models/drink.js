@@ -2,7 +2,6 @@ import { DataTypes, QueryTypes } from "sequelize";
 import { Op } from "sequelize";
 
 import sequelize from "../utils/database.js";
-import Ingredient, { getIngredients } from "./ingredient.js";
 import Recipe from "./recipe.js";
 
 const Drink = sequelize.define("drink", {
@@ -37,31 +36,6 @@ const Drink = sequelize.define("drink", {
     type: DataTypes.FLOAT, //da 0 a 10;
   },
 });
-
-export const getDrink = async (extKeyDrink) => {
-  let drink = {};
-
-  //INFORMAZIONE DEL DRINK
-  const drinkInfo = await Drink.findByPk(extKeyDrink);
-
-  drink = {
-    id: drinkInfo.id,
-    name: drinkInfo.name,
-    image: drinkInfo.image,
-    description: drinkInfo.description,
-  };
-  //VALORI DEL DRINK
-  drink.values = {
-    secco: drinkInfo.secco,
-    speziato: drinkInfo.speziato,
-    dolcezza: drinkInfo.dolcezza,
-  };
-
-  drink.ingredients = await getIngredients(extKeyDrink);
-
-  //console.log(drink);
-  return drink;
-};
 
 export async function findMyDrinkTemp(min1, min2, moltiplicatore, prefs) {
   const min1_minus = min1[2] - min1[1] * moltiplicatore;
