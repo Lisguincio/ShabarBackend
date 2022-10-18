@@ -1,6 +1,5 @@
 import { getUserByEmail } from "../models/user.js";
 import UserPrefs from "../models/usersprefs.js";
-import Drink, { findMyDrink, findMyDrinkTemp } from "../models/drink.js";
 import DispersionePreferenza from "../models/dispersionepreferenze.js";
 import scelteUtente, {
   createScelta,

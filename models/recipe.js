@@ -26,11 +26,17 @@ const Recipe = sequelize.define("recipe", {
     allowNull: false,
     defaultValue: 0,
   },
+
+  rate: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  },
 });
 
 Recipe.afterCreate(async (recipe) => {
   console.log("Create ->");
-  const { extKeyDrink, extKeyIngredient, qty } = recipe;
+  const { extKeyDrink, extKeyIngredient, rate } = recipe;
 
   const ingredient = await Ingredient.findByPk(extKeyIngredient);
 

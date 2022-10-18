@@ -8,6 +8,7 @@ import Drink from "./models/drink.js";
 const app = express();
 
 app.set("view engine", "ejs");
+app.set("views", "./templates");
 app.use(express.urlencoded({ extended: true }));
 
 app.use(express.json());

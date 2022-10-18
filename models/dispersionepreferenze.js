@@ -13,14 +13,24 @@ const DispersionePreferenza = sequelize.define("dispersionepreferenza", {
   extUser: {
     type: DataTypes.INTEGER,
   },
-  dolcezza: {
-    type: DataTypes.FLOAT, //da 0 a 10;
+  dolce: {
+    type: DataTypes.INTEGER, //da 0 a 10;
+    allowNull: false,
   },
   secco: {
-    type: DataTypes.FLOAT, //da 0 a 10;
+    type: DataTypes.INTEGER, //da 0 a 10;
   },
   speziato: {
-    type: DataTypes.FLOAT, //da 0 a 10;
+    type: DataTypes.INTEGER, //da 0 a 10;
+  },
+  aspro: {
+    type: DataTypes.INTEGER, //da 0 a 10;
+  },
+  frizzante: {
+    type: DataTypes.INTEGER, //da 0 a 10;
+  },
+  amarognolo: {
+    type: DataTypes.INTEGER, //da 0 a 10;
   },
 });
 

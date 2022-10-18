@@ -26,7 +26,7 @@ const Ingredient = sequelize.define("ingredient", {
     type: DataTypes.STRING, //da 0 a 100;
     allowNull: false,
   },
-  dolcezza: {
+  dolce: {
     type: DataTypes.INTEGER, //da 0 a 10;
     allowNull: false,
   },
@@ -34,6 +34,15 @@ const Ingredient = sequelize.define("ingredient", {
     type: DataTypes.INTEGER, //da 0 a 10;
   },
   speziato: {
+    type: DataTypes.INTEGER, //da 0 a 10;
+  },
+  aspro: {
+    type: DataTypes.INTEGER, //da 0 a 10;
+  },
+  frizzante: {
+    type: DataTypes.INTEGER, //da 0 a 10;
+  },
+  amarognolo: {
     type: DataTypes.INTEGER, //da 0 a 10;
   },
 });
