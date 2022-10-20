@@ -55,8 +55,8 @@
   <br>
   <p style="display: block";>
   <div >
-      <label for="dolcezza">Dolcezza</label>
-    <input type="text" id="dolcezza" value="<%=ingredients[0].dolcezza%>" size="5%" ">
+      <label for="dolce">Dolce</label>
+    <input type="text" id="dolce" value="<%=ingredients[0].dolce%>" size="5%" ">
   </div>
   <div>
       <label for="secco">Secco</label>
@@ -82,7 +82,7 @@
       const nomeIngredienteEditing = document.getElementById("NomeIngredienteEditing");
       const quantita = document.getElementById("qty");
 
-      const Inp_dolcezza = document.getElementById("dolcezza");
+      const Inp_dolce = document.getElementById("dolce");
       const Inp_secco = document.getElementById("secco");
       const Inp_speziato = document.getElementById("speziato");
 
@@ -92,7 +92,7 @@
       var ingredients = <%-JSON.stringify(ingredients)%>;
 
       const sendrecipe = async () => {
-        await fetch(`${process.env.RAILWAY_STATIC_URL || 'https://localhost:5000'}/backend/modificaricetta`, {
+        await fetch('http://localhost:5000/backend/modificaricetta', {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -106,7 +106,7 @@
       };
 
       const removerecipe = async () => {
-        await fetch(`${process.env.RAILWAY_STATIC_URL || 'https://localhost:5000'}/backend/removerecipe`, {
+        await fetch('http://localhost:5000/backend/removerecipe', {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -119,7 +119,7 @@
       };
 
       const resetrecipe = async () => {
-        await fetch(`${process.env.RAILWAY_STATIC_URL || 'https://localhost:5000'}/backend/resetrecipe`, {
+        await fetch('http://localhost:5000/backend/resetrecipe', {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -131,14 +131,14 @@
       };
 
       const editIngredient = async() =>{
-        await fetch(`${process.env.RAILWAY_STATIC_URL || 'https://localhost:5000'}/backend/modificaIngrediente`, {
+        await fetch('http://localhost:5000/backend/modificaIngrediente', {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
             id_ingredient: nomeIngredienteEditing.value,
-            dolcezzaparam: Inp_dolcezza.value,
+            dolceparam: Inp_dolce.value,
             seccoparam : Inp_secco.value,
             speziatoparam: Inp_speziato.value
           }),
@@ -162,7 +162,7 @@
       })
       nomeIngredienteEditing.addEventListener("change",()=>{
 
-        Inp_dolcezza.value = ingredients[(nomeIngredienteEditing.value)-1].dolcezza;
+        Inp_dolce.value = ingredients[(nomeIngredienteEditing.value)-1].dolce;
         Inp_secco.value = ingredients[(nomeIngredienteEditing.value)-1].secco;
         Inp_speziato.value = ingredients[(nomeIngredienteEditing.value)-1].speziato;
 

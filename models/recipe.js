@@ -36,18 +36,35 @@ const Recipe = sequelize.define("recipe", {
 
 Recipe.afterCreate(async (recipe) => {
   console.log("Create ->");
-  const { extKeyDrink, extKeyIngredient, rate } = recipe;
+  const { extKeyDrink, extKeyIngredient, rate, qty } = recipe;
 
-  const ingredient = await Ingredient.findByPk(extKeyIngredient);
+  const ingredient = await Ingredient.findByPk(extKeyIngredient, {
+    attributes: {
+      exclude: ["id", "name", "updatedAt", "createdAt"],
+    },
+  });
 
-  const { dolcezza, secco, speziato } = ingredient;
+  const multiplier = ingredient.multiplier;
 
-  const drink = await Drink.findByPk(extKeyDrink);
+  delete ingredient.multiplier;
 
-  drink.increment({
-    dolcezza: (dolcezza * qty) / 100,
-    secco: (secco * qty) / 100,
-    speziato: (speziato * qty) / 100,
+  const drink = await Drink.findByPk(extKeyDrink, {
+    raw: false,
+  });
+
+  //console.log(drink);
+
+  Object.entries(ingredient).forEach(([key, value]) => {
+    console.log(key, (value * qty) / 100);
+    drink.increment({
+      [key]: (value * qty) / 100,
+    });
+
+    /* await drink.increment({
+    dolce: (dolce * rate) / 100,
+    secco: (secco * rate) / 100,
+    speziato: (speziato * rate) / 100,
+  }); */
   });
 });
 
