@@ -1,19 +1,13 @@
 import { Sequelize } from "sequelize";
 
-import customEnv from "custom-env";
-customEnv.env("local");
-
-const sequelize = new Sequelize(
-  process.env.MYSQLDATABASE,
-  process.env.MYSQLUSER,
-  process.env.MYSQLPASSWORD,
-  {
-    query: { raw: true },
-    dialect: "mysql",
-    host: process.env.MYSQLHOST,
-    port: process.env.MYSQLPORT || 3306,
-    //logging: false,
-  }
-);
+const sequelize = new Sequelize({
+  dialect: "sqlite",
+  storage: "./dbShabar.db", // Specifica il file SQLite dove verranno salvati i dati
+  logging: (sql, { bind }) => {
+    console.log(sql);
+    console.log(bind);
+  },
+  //logging: false, // Puoi disabilitare il logging se non necessario
+});
 
 export default sequelize;

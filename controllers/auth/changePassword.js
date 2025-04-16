@@ -2,6 +2,10 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import User from "../../models/user.js";
 
+import dotenv from "dotenv";
+
+dotenv.config({ path: ".env.local" });
+
 const changePassword = async (token, password) => {
   /*
   Cambia la password dell'utente

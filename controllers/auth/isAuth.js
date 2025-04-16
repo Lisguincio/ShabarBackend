@@ -1,5 +1,9 @@
 import jwt from "jsonwebtoken";
 
+import dotenv from "dotenv";
+
+dotenv.config({ path: ".env.local" });
+
 const isAuth = async (token) => {
   //Decodifico il token
   const decodedToken = jwt.verify(token, process.env.SECRETKEYTOKEN);

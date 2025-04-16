@@ -2,6 +2,10 @@ import { getUserByEmail } from "../../models/user.js";
 import jwt from "jsonwebtoken";
 import { sendEmail } from "../../utils/mailSender.js";
 
+import dotenv from "dotenv";
+
+dotenv.config({ path: ".env.local" });
+
 const requestResetPassword = async (email) => {
   /*
   Richiede l'email dell'utente e invia una mail con un link per resettare la password
