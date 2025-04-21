@@ -11,6 +11,8 @@ import {
   resetRecipe,
   removerecipe,
   modificaIngrediente,
+  inserisciIngredienteHTML,
+  addIngredient as addIngredientBackend,
 } from "../controllers/backend.js";
 import { authorization } from "../controllers/middleware.js";
 import Recipe from "../models/recipe.js";
@@ -30,10 +32,14 @@ router.use(catalogueRouter);
 router.get("/recipes", (req, res) => {
   inserisciRicettaHTML(req, res);
 });
+router.get("/ingredients", (req, res) => {
+  inserisciIngredienteHTML(req, res);
+});
 router.post("/backend/modificaricetta", setRecipe);
 router.post("/backend/resetrecipe", resetRecipe);
 router.post("/backend/modificaIngrediente", modificaIngrediente);
 router.post("/backend/removerecipe", removerecipe);
+router.post("/backend/addIngredient", addIngredientBackend);
 router.get("/backend/drinks", fetchAllDrinksBackend);
 router.get("/backend/ingredients", fetchAllIngredientsBackend);
 

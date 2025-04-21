@@ -55,16 +55,16 @@
   <br>
   <p style="display: block";>
   <div >
-      <label for="dolce">Dolce</label>
-    <input type="text" id="dolce" value="<%=ingredients[0].dolce%>" size="5%" ">
+      <label for="sweet">sweet</label>
+    <input type="text" id="sweet" value="<%=ingredients[0].sweet%>" size="5%" ">
   </div>
   <div>
-      <label for="secco">Secco</label>
-    <input type="text" id="secco" value="<%=ingredients[0].secco%> " size="5%">
+      <label for="dry">dry</label>
+    <input type="text" id="dry" value="<%=ingredients[0].dry%> " size="5%">
   </div>
   <div>
-      <label for="speziato">Speziato</label>
-    <input type="text" id="speziato" value="<%=ingredients[0].speziato%> " size="5%">
+      <label for="spiced">spiced</label>
+    <input type="text" id="spiced" value="<%=ingredients[0].spiced%> " size="5%">
   </div>
 
   <button id="Edit_Ingrediente">Edit Ingrediente</button>
@@ -82,9 +82,9 @@
       const nomeIngredienteEditing = document.getElementById("NomeIngredienteEditing");
       const quantita = document.getElementById("qty");
 
-      const Inp_dolce = document.getElementById("dolce");
-      const Inp_secco = document.getElementById("secco");
-      const Inp_speziato = document.getElementById("speziato");
+      const Inp_sweet = document.getElementById("sweet");
+      const Inp_dry = document.getElementById("dry");
+      const Inp_spiced = document.getElementById("spiced");
 
       const Button_Remove_Recipe = document.getElementById("Remove");
       const Button_Edit_Ingrediente = document.getElementById("Edit_Ingrediente");
@@ -138,9 +138,9 @@
           },
           body: JSON.stringify({
             id_ingredient: nomeIngredienteEditing.value,
-            dolceparam: Inp_dolce.value,
-            seccoparam : Inp_secco.value,
-            speziatoparam: Inp_speziato.value
+            sweetparam: Inp_sweet.value,
+            dryparam : Inp_dry.value,
+            spicedparam: Inp_spiced.value
           }),
         });
       };
@@ -162,9 +162,9 @@
       })
       nomeIngredienteEditing.addEventListener("change",()=>{
 
-        Inp_dolce.value = ingredients[(nomeIngredienteEditing.value)-1].dolce;
-        Inp_secco.value = ingredients[(nomeIngredienteEditing.value)-1].secco;
-        Inp_speziato.value = ingredients[(nomeIngredienteEditing.value)-1].speziato;
+        Inp_sweet.value = ingredients[(nomeIngredienteEditing.value)-1].sweet;
+        Inp_dry.value = ingredients[(nomeIngredienteEditing.value)-1].dry;
+        Inp_spiced.value = ingredients[(nomeIngredienteEditing.value)-1].spiced;
 
       })
     </script>

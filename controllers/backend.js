@@ -82,10 +82,70 @@ export const inserisciRicettaHTML = async (req, res) => {
   const drinks = await Drink.findAll({});
   console.log(drinks);
   const ingredients = await Ingredient.findAll();
-  res.render("Inserimento_Ingredienti.ejs", {
+  res.render("Recipes.ejs", {
     drinks: drinks,
     ingredients: ingredients,
   });
+};
+
+//#region Ingredienti
+export const inserisciIngredienteHTML = async (req, res) => {
+  try {
+    // Recupera tutti i drink e gli ingredienti dal database
+    const drinks = await Drink.findAll({});
+    const ingredients = await Ingredient.findAll({});
+
+    // Renderizza il file EJS e passa i dati
+    res.render("Ingredients.ejs", {
+      drinks: drinks,
+      ingredients: ingredients,
+    });
+  } catch (error) {
+    console.error("Errore durante il rendering:", error);
+    res.status(500).json({ message: "Errore interno del server" });
+  }
+};
+
+export const addIngredient = async (req, res) => {
+  console.log("Richiesta di aggiunta ingrediente ricevuta");
+  const {
+    name,
+    multiplier,
+    grade_low,
+    grade_high,
+    sweet,
+    dry,
+    spiced,
+    sour,
+    fizzy,
+    bitter,
+    herbal,
+    fruity,
+  } = req.body;
+  console.log("Dati ricevuti:", req.body);
+  try {
+    const newIngredient = await Ingredient.create({
+      name: name,
+      multiplier: multiplier,
+      grade_low: grade_low,
+      grade_high: grade_high,
+      sweet: sweet,
+      dry: dry,
+      spiced: spiced,
+      sour: sour,
+      fizzy: fizzy,
+      bitter: bitter,
+      herbal: herbal,
+      fruity: fruity,
+    });
+    res.status(200).json({
+      message: "Ingredient added successfully",
+      ingredientId: newIngredient.id,
+    });
+  } catch (error) {
+    console.error("Error adding ingredient:", error);
+    res.status(500).json({ message: "Error adding ingredient" });
+  }
 };
 
 export const modificaIngrediente = async (req, res) => {
@@ -158,3 +218,5 @@ export const modificaIngrediente = async (req, res) => {
 
   return res.status(200).json({ message: "Update Ingredient Done!" });
 };
+
+//#endregion

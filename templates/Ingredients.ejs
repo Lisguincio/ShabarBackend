@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inserimento Ingredienti</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      width: 400px;
+    }
+    label {
+      margin-top: 10px;
+    }
+    input, button, select {
+      margin-top: 5px;
+      padding: 8px;
+      font-size: 14px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <h1>Inserisci un nuovo ingrediente</h1>
+  <form id="ingredientForm">
+    <label for="name">Nome Ingrediente:</label>
+    <input type="text" id="name" name="name" placeholder="Nome ingrediente" required>
+
+    <label for="multiplier">Moltiplicatore:</label>
+    <input type="number" id="grade_low" name="grade_low" placeholder="Moltiplicatore (0-1)" min="0" max="1" step=".01" required>
+
+    <label for="grade_low">Grado Alcolico Minimo:</label>
+    <input type="number" id="grade_low" name="grade_low" placeholder="Grado minimo (0-100)" min="0" max="100" required>
+
+    <label for="grade_high">Grado Alcolico Massimo:</label>
+    <input type="number" id="grade_high" name="grade_high" placeholder="Grado massimo (0-100)" min="0" max="100" required>
+
+    <label for="sweet">Dolcezza:</label>
+    <input type="number" id="sweet" name="sweet" placeholder="Dolcezza (0-10)" min="0" max="10" required>
+
+    <label for="dry">Secchezza:</label>
+    <input type="number" id="dry" name="dry" placeholder="Secchezza (0-10)" min="0" max="10">
+
+    <label for="spiced">Speziatura:</label>
+    <input type="number" id="spiced" name="spiced" placeholder="Speziatura (0-10)" min="0" max="10">
+
+    <label for="sour">Acidità:</label>
+    <input type="number" id="sour" name="sour" placeholder="Acidità (0-10)" min="0" max="10">
+
+    <label for="fizzy">Frizzantezza:</label>
+    <input type="number" id="fizzy" name="fizzy" placeholder="Frizzantezza (0-10)" min="0" max="10">
+
+    <label for="bitter">Amarezza:</label>
+    <input type="number" id="bitter" name="bitter" placeholder="Amarezza (0-10)" min="0" max="10">
+
+    <label for="herbal">Erbaceo:</label>
+    <input type="number" id="herbal" name="herbal" placeholder="Erbaceo (0-10)" min="0" max="10">
+
+    <label for="fruity">Fruttato:</label>
+    <input type="number" id="fruity" name="fruity" placeholder="Fruttato (0-10)" min="0" max="10">
+
+    <button type="button" id="submitIngredient">Aggiungi Ingrediente</button>
+  </form>
+
+  <script>
+    const form = document.getElementById("ingredientForm");
+    const submitButton = document.getElementById("submitIngredient");
+
+    submitButton.addEventListener("click", async () => {
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      // Converti i valori numerici
+      for (const key in data) {
+        if (!isNaN(data[key])) {
+          data[key] = parseFloat(data[key]);
+        }
+      }
+
+      try {
+        console.log("Invio dati:", data); // Log dei dati inviati
+        const response = await fetch("http://localhost:5000/backend/addIngredient", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (response.ok) {
+          alert("Ingrediente aggiunto con successo!");
+          form.reset();
+        } else {
+          alert("Errore durante l'inserimento dell'ingrediente.");
+        }
+      } catch (error) {
+        console.error("Errore:", error);
+        alert("Errore durante l'inserimento dell'ingrediente.");
+      }
+    });
+  </script>
+</body>
+</html>

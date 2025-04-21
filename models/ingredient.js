@@ -17,32 +17,42 @@ const Ingredient = sequelize.define("ingredient", {
   multiplier: {
     type: DataTypes.DECIMAL(10, 1), //0 INGREDIENTE NORMALE, 1 INGREDIENTI NON QUANTIFICABILI, 2 INGREDIENTI NON  -->> E' un moltiplicatore: Acqua x0; Liquori x1; Menta x0.2---
     defaultValue: "1",
+    validate: {
+      min: 0, // Valore minimo
+      max: 1, // Valore massimo
+    },
   },
-  grade_min: {
+  grade_low: {
     type: DataTypes.INTEGER, //da 0 a 100;
     allowNull: false,
   },
-  grade_max: {
-    type: DataTypes.STRING, //da 0 a 100;
+  grade_high: {
+    type: DataTypes.INTEGER, //da 0 a 100;
     allowNull: false,
   },
-  dolce: {
+  sweet: {
     type: DataTypes.INTEGER, //da 0 a 10;
     allowNull: false,
   },
-  secco: {
+  dry: {
     type: DataTypes.INTEGER, //da 0 a 10;
   },
-  speziato: {
+  spiced: {
     type: DataTypes.INTEGER, //da 0 a 10;
   },
-  aspro: {
+  sour: {
     type: DataTypes.INTEGER, //da 0 a 10;
   },
-  frizzante: {
+  fizzy: {
     type: DataTypes.INTEGER, //da 0 a 10;
   },
-  amarognolo: {
+  bitter: {
+    type: DataTypes.INTEGER, //da 0 a 10;
+  },
+  herbal: {
+    type: DataTypes.INTEGER, //da 0 a 10;
+  },
+  fruity: {
     type: DataTypes.INTEGER, //da 0 a 10;
   },
 });

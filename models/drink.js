@@ -18,31 +18,37 @@ const Drink = sequelize.define("drink", {
   description: {
     type: DataTypes.TEXT("long"),
   },
-  grade_min: {
+  grade_low: {
     type: DataTypes.INTEGER, //da 0 a 100;
     allowNull: false,
   },
-  grade_max: {
+  grade_high: {
     type: DataTypes.INTEGER, //da 0 a 100;
     allowNull: false,
   },
-  dolce: {
+  sweet: {
     type: DataTypes.INTEGER, //da 0 a 10;
     allowNull: false,
   },
-  secco: {
+  dry: {
     type: DataTypes.INTEGER, //da 0 a 10;
   },
-  speziato: {
+  spiced: {
     type: DataTypes.INTEGER, //da 0 a 10;
   },
-  aspro: {
+  sour: {
     type: DataTypes.INTEGER, //da 0 a 10;
   },
-  frizzante: {
+  fizzy: {
     type: DataTypes.INTEGER, //da 0 a 10;
   },
-  amarognolo: {
+  bitter: {
+    type: DataTypes.INTEGER, //da 0 a 10;
+  },
+  herbal: {
+    type: DataTypes.INTEGER, //da 0 a 10;
+  },
+  fruity: {
     type: DataTypes.INTEGER, //da 0 a 10;
   },
 });
